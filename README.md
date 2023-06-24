@@ -21,6 +21,6 @@ A showcase of macOS accessibility API capabilities.
 - consider removing "AX" prefixes to make UI cleaner
 - consider changing "CFArray", "CFBoolean", "AXUIElement" to a more obvious name in the UI. 
 
-![ScreenShot](Screenshots/screenshot1.png)
+![ScreenShot](Screenshots/Screenshot1.png)
 
-![ScreenShot](Screenshots/screenshot2.png)
+![ScreenShot](Screenshots/Screenshot2.png)
