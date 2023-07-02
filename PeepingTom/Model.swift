@@ -30,6 +30,7 @@ enum ElementEnum {
 
 struct Item {
     var value: ElementEnum
+    var actions: [String]?
     var title: String
     var icon: NSImage?
 }

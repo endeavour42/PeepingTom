@@ -17,7 +17,8 @@ struct ElementView: View {
             VStack {
                 pathView()
                 backButton(scrollReader: scrollReader)
-                table()
+                attributeTable()
+                actionTable()
                 openButton()
             }
         }
@@ -45,7 +46,7 @@ struct ElementView: View {
         }
     }
     
-    private func table() -> some View {
+    private func attributeTable() -> some View {
         Table(of: Row.self, selection: $selectedRow) {
             TableColumn("Attribute") { v in
                 HStack {
@@ -89,7 +90,24 @@ struct ElementView: View {
             }
         }
     }
-    
+
+    private func actionTable() -> some View {
+        Table(of: String.self, selection: $selectedRow) {
+            TableColumn("Action", value: \.self)
+        } rows: {
+            let actions = switch item.value {
+                case .element(let element):
+                    element.element.actions ?? []
+                default:
+                    [] as [String]
+            }
+            ForEach(actions) { action in
+                let _ = print(action)
+                TableRow(action)
+            }
+        }
+    }
+
     private func openButton() -> some View {
         HStack {
             Spacer()
@@ -100,12 +118,16 @@ struct ElementView: View {
                 switch item.value {
                 case .element(let element):
                     let value = element.element.attributeValue(selectedRow)
+                    let actions = element.element.actions
+                    
                     if let array = value as? [AXUIElement] {
-                        pushView(.init(value: .elements(array.map { NamedElement(element: $0)}), title: "TODO"))
+                        let value = ElementEnum.elements(array.map { NamedElement(element: $0)})
+                        pushView(.init(value: value, actions: actions, title: "TODO"))
                     } else {
                         let subElement = value as! AXUIElement?
                         if let subElement {
-                            pushView(.init(value: .element(NamedElement(element: subElement)), title: "TODO"))
+                            let value = ElementEnum.element(NamedElement(element: subElement))
+                            pushView(.init(value: value, actions: actions, title: "TODO"))
                         }
                     }
                     
@@ -114,7 +136,7 @@ struct ElementView: View {
                         "\(el.id)" == selectedRow
                     }
                     assert(el != nil)
-                    pushView(.init(value: .element(el!), title: "TODO"))
+                    pushView(.init(value: .element(el!), actions: el!.element.actions, title: "TODO"))
                 }
             }
             .disabled(selectedRow == nil)
